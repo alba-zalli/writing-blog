@@ -3,14 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "npm install && npm run supabase-codegen",
     "dev": "next dev",
+    "prebuild": "npm run supabase-codegen",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "lint:fix": "eslint --fix"
+    "lint": "next lint",
+    "supabase-codegen": "supabase gen types typescript --project-id oufcrfjizhrrckrukdzi --schema public > src/supabase/types.ts"
   },
   "dependencies": {
     "@midudev/tailwind-animations": "^1.0.1",
+    "@radix-ui/react-icons": "^1.3.2",
+    "@supabase/ssr": "^0.10.3",
     "framer-motion": "^12.38.0",
     "next": "16.2.4",
     "react": "19.2.4",
@@ -24,6 +28,7 @@
     "@types/react-dom": "^19.2.3",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
+    "supabase": "^2.98.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

@@ -14,6 +14,21 @@ export default function ClientHome({ posts }: { posts: any[] }) {
     setSearchValue(value);
   };
 
+const cleanExcerpt = (html = "") => {
+  const cleaned = html
+    .replace(/\[\s*&hellip;\s*\]/gi, "")
+    .replace(/\[\s*…\s*\]/g, "")
+    .replace(/\[\s*\.\.\.\s*\]/g, "")
+    .replace(/&hellip;/g, "")
+    .replace(/…/g, "")
+    .replace(/<[^>]*>/g, " ") // optional: strip HTML
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/[.,!?;:\s]+$/g, ""); // remove trailing punctuation/spaces
+
+  return cleaned + "...";
+};
+
   const getWordCount = (html = "") => {
     const text = html
       .replace(/<[^>]*>/g, " ")
@@ -140,7 +155,7 @@ export default function ClientHome({ posts }: { posts: any[] }) {
               <div
                 className="mt-3 text-gray-700"
                 dangerouslySetInnerHTML={{
-                  __html: post.excerpt.rendered,
+                  __html: cleanExcerpt(post.excerpt.rendered),
                 }}
               />
 
