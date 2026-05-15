@@ -1,26 +1,21 @@
 import Link from "next/link";
-import GuestbookForm from "@/components/guestbook-form";
-import GuestbookList from "@/components/guestbook-list";
-import ParagraphSkeleton from "@/components/paragraph-skeleton";
-import SignInWithGitHub from "@/components/sign-in-with-github";
-import SignOut from "@/components/sign-out";
-import { cn, fadeIn } from "@/lib/utils";
-import { createClient } from "@/supabase/server";
+import GuestbookForm from "@/components/GuestbookForm";
+import GuestbookList from "@/components/GuestbookList";
+import SignInWithGitHub from "@/components/SignInWithGithub";
+import SignOut from "@/SignOut/SignOut";
+import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import { Suspense } from "react";
+import Search from "@/components/Search";
 
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: {
-    submitted?: boolean;
-  };
+  searchParams: Promise<{
+    submitted?: string;
+  }>;
 }) {
-  const supabaseClient = createClient(cookies());
-
-  const {
-    data: { user },
-  } = await supabaseClient.auth.getUser();
+  const params = await searchParams;
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-indigo-200 text-gray-900">
@@ -47,11 +42,7 @@ export default async function Page({
           </Link>
 
           <div className="w-64">
-            <Search
-              onSearch={(value) => {
-                window.location.href = `/?search=${value}`;
-              }}
-            />
+
           </div>
         </div>
 
@@ -59,56 +50,16 @@ export default async function Page({
           Guestbook
         </h1>
 
-        {!user ? (
-          <>
-            <section
-              className={cn(
-                fadeIn,
-                "animation-delay-200 flex flex-col gap-2"
-              )}
-            >
-              Welcome to my guestbook!
+        <h2>Leave a message or comment</h2>
 
-              <div>
-                <SignInWithGitHub />
-              </div>
-            </section>
+        <GuestbookForm submitted={params?.submitted} />
 
-            <section className={cn(fadeIn, "animation-delay-600")}>
-              <Suspense fallback={<ParagraphSkeleton />}>
-                <GuestbookList />
-              </Suspense>
-            </section>
-          </>
-        ) : (
-          <>
-            <section className={cn(fadeIn, "animation-delay-200")}>
-              <div className="flex items-center gap-2">
-                Hi, {user.user_metadata.user_name}!
-                <div className="animate animate-wave animation-delay-1000">
-                  👋
-                </div>
+        <div className="mt-6 space-y-4">
 
-                <SignOut />
-              </div>
+        <br></br>
 
-              {searchParams?.submitted ? (
-                <span>
-                  Your message has been submitted! Thanks for signing my
-                  guestbook.
-                </span>
-              ) : (
-                <GuestbookForm />
-              )}
-            </section>
-
-            <section className={cn(fadeIn, "animation-delay-600")}>
-              <Suspense fallback={<ParagraphSkeleton />}>
-                <GuestbookList />
-              </Suspense>
-            </section>
-          </>
-        )}
+        <GuestbookList />
+        </div>
       </section>
     </main>
   );
